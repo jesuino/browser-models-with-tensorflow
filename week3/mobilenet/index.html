@@ -1,0 +1,72 @@
+<html>
+
+<head>
+
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/mobilenet@1.0.0"></script>
+
+</head>
+
+<body>
+
+    <img id="img" width="800" height="600" src="images/loading.gif" />
+    <br />
+    <select name="images" id="images" disabled="disabled" onchange="updateImage()">
+
+        <option value="car1.jpg">Car 1</option>
+        <option value="car2.jpg">Car 2</option>
+        <option value="cat1.jpg">Cat 1</option>
+        <option value="cat2.jpg">Cat 2</option>
+        <option value="cat3.jpg">Cat 3</option>
+        <option value="cat4.jpg">Cat 4</option>
+        <option value="dog1.jpg">Dog 1</option>
+        <option value="dog2.jpg">Dog 2</option>
+        <option value="dog3.jpg">Dog 3</option>
+        <option value="dog4.jpg">Dog 4</option>
+        <option value="fish1.jpg">Fish 1</option>
+        <option value="fish2.jpg">Fish 2</option>
+        <option value="fish3.jpg">Fish 3</option>
+        <option value="truck1.jpg">Truck 1</option>
+        <option value="truck2.jpg">Truck 2</option>
+    </select>
+
+    <div id="output" style="font-family: courier;font-size: 24px; height: 300px;"></div>
+
+    <script lang="js">
+        let img, images, output;
+        let model;
+
+        function init() {
+            mobilenet.load().then(m => {
+                model = m;
+                img = document.getElementById("img");
+                images = document.getElementById("images");
+                output = document.getElementById("output");
+                img.onload = classify;
+                updateImage();
+            })
+        }
+        function updateImage() {
+            img.src = "/images/" + images.value;
+        }
+
+        function classify() {
+            output.innerHTML = "<h3> Predicting...</h3>";
+            images.disabled = "disabled";
+            model.classify(img).then(predictions => {
+                output.innerHTML = "";
+                images.disabled = "";
+                predictions.forEach(p => {
+                    output.innerHTML += `<strong>${p.className}</strong>: <em>${p.probability}</em> <br />`
+                })
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', init);
+
+    </script>
+
+
+</body>
+
+</html>

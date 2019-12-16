@@ -1,0 +1,39 @@
+<html>
+
+<head>
+
+        <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/toxicity"></script>
+
+</head>
+
+<body>
+
+        <input type="text" id="txtInput" value="you suck!" /> <button onclick="predict()">Predict</button>
+        <script>
+                let model;
+
+                async function init() {
+                        const threshold = 0.9;
+                        model = await toxicity.load(threshold);
+
+                }
+                function predict() {
+                        const sentence = document.getElementById("txtInput").value;
+                        const sentences = [sentence];
+                        model.classify(sentences).then(predictions => {
+                                predictions.forEach(p => console.log(p.label))
+                                const badThings = predictions.filter(p => p.results[0].match)
+                                        .map(p => p.label)
+                                        
+                                console.log(badThings)
+                        });
+
+                }
+                document.addEventListener('DOMContentLoaded', init);
+
+        </script>
+
+</body>
+
+</html>
